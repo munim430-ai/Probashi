@@ -1,0 +1,751 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Probashi UI Kit</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&family=Noto+Sans+Bengali:wght@400;500;600;700&family=Galada&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family:'Poppins',sans-serif; background:#1a1a1a; display:flex; align-items:center; justify-content:center; min-height:100vh; padding:24px; gap:32px; }
+.phone { width:375px; height:752px; background:white; border-radius:44px; box-shadow:0 32px 80px rgba(0,0,0,0.6),0 0 0 1px rgba(255,255,255,0.08),inset 0 0 0 1px rgba(0,0,0,0.2); overflow:hidden; display:flex; flex-direction:column; flex-shrink:0; }
+.scroll { flex:1; overflow-y:auto; overflow-x:hidden; }
+.scroll::-webkit-scrollbar { display:none; }
+.label-pill { position:absolute; bottom:-28px; left:50%; transform:translateX(-50%); background:rgba(255,255,255,0.12); color:rgba(255,255,255,0.5); font-size:11px; font-weight:600; padding:4px 14px; border-radius:9999px; white-space:nowrap; font-family:'Poppins',sans-serif; }
+</style>
+</head>
+<body>
+<div class="phone" id="root"></div>
+
+<script type="text/babel">
+const { useState, useEffect, useRef } = React;
+
+// ── SHARED ICONS ──────────────────────────────────────────────
+const IC = {
+  home:    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>,
+  send:    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>,
+  jobs:    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/></svg>,
+  more:    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="5" cy="12" r="1" fill="currentColor"/><circle cx="12" cy="12" r="1" fill="currentColor"/><circle cx="19" cy="12" r="1" fill="currentColor"/></svg>,
+  profile: <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>,
+  bell:    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>,
+  back:    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>,
+  check:   <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#006400" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>,
+  arrow:   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>,
+  search:  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#8C8C8C" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>,
+  warn:    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#CE1126" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>,
+  mic:     <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="9" y="2" width="6" height="12" rx="3"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="22"/><line x1="8" y1="22" x2="16" y2="22"/></svg>,
+  shield:  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>,
+  users:   <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>,
+  docs:    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>,
+  chev:    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M9 18l6-6-6-6"/></svg>,
+};
+
+const Badge = ({ label, color, bg }) => (
+  <span style={{ fontSize:10, fontWeight:700, background:bg, color, padding:'2px 8px', borderRadius:9999 }}>{label}</span>
+);
+
+// ── HEADER ────────────────────────────────────────────────────
+const Header = ({ showBack, title, onBack, sub }) => (
+  <div style={{ background:'#006400', padding:'12px 16px', display:'flex', alignItems:'center', justifyContent:'space-between', flexShrink:0, minHeight:56 }}>
+    <div style={{ display:'flex', alignItems:'center', gap:10 }}>
+      {showBack ? (
+        <button onClick={onBack} style={{ background:'rgba(255,255,255,0.15)', border:'none', borderRadius:'50%', width:34, height:34, display:'flex', alignItems:'center', justifyContent:'center', cursor:'pointer', color:'white' }}>{IC.back}</button>
+      ) : (
+        <div style={{ display:'flex', alignItems:'center', gap:8 }}>
+          <div style={{ width:30, height:30, borderRadius:'50%', background:'rgba(255,255,255,0.15)', display:'flex', alignItems:'center', justifyContent:'center' }}>
+            <div style={{ width:17, height:17, borderRadius:'50%', background:'#CE1126' }} />
+          </div>
+          <div style={{ display:'flex', alignItems:'baseline', gap:4 }}>
+            <span style={{ color:'white', fontWeight:800, fontSize:18, letterSpacing:'-0.02em' }}>Probashi</span>
+            <span style={{ fontFamily:'Galada, serif', fontSize:15, color:'rgba(255,255,255,0.75)' }}>প্রবাসী</span>
+          </div>
+        </div>
+      )}
+      {showBack && (
+        <div>
+          <div style={{ color:'white', fontWeight:700, fontSize:15 }}>{title}</div>
+          {sub && <div style={{ color:'rgba(255,255,255,0.65)', fontSize:11 }}>{sub}</div>}
+        </div>
+      )}
+    </div>
+    <div style={{ display:'flex', gap:8, alignItems:'center' }}>
+      <button style={{ position:'relative', background:'rgba(255,255,255,0.15)', border:'none', borderRadius:'50%', width:34, height:34, display:'flex', alignItems:'center', justifyContent:'center', cursor:'pointer', color:'white' }}>
+        {IC.bell}
+        <span style={{ position:'absolute', top:-2, right:-2, background:'#CE1126', color:'white', fontSize:9, fontWeight:700, minWidth:16, height:16, borderRadius:9999, display:'flex', alignItems:'center', justifyContent:'center', border:'2px solid #006400' }}>2</span>
+      </button>
+      <div style={{ width:32, height:32, borderRadius:'50%', background:'#CE1126', display:'flex', alignItems:'center', justifyContent:'center', color:'white', fontWeight:700, fontSize:13 }}>R</div>
+    </div>
+  </div>
+);
+
+// ── BOTTOM NAV ────────────────────────────────────────────────
+const NAV = [
+  { id:'home',    label:'Home',    icon:IC.home    },
+  { id:'send',    label:'Send',    icon:IC.send    },
+  { id:'jobs',    label:'Jobs',    icon:IC.jobs    },
+  { id:'more',    label:'More',    icon:IC.more    },
+  { id:'profile', label:'Profile', icon:IC.profile },
+];
+const BottomNav = ({ active, onNavigate }) => (
+  <div style={{ background:'white', borderTop:'1px solid #E0E0E0', display:'flex', flexShrink:0, paddingBottom:8 }}>
+    {NAV.map(item => {
+      const a = active === item.id;
+      return (
+        <button key={item.id} onClick={() => onNavigate(item.id)} style={{ flex:1, display:'flex', flexDirection:'column', alignItems:'center', gap:3, padding:'8px 0 4px', border:'none', background:'none', cursor:'pointer' }}>
+          <div style={{ color:a?'#006400':'#8C8C8C' }}>{item.icon}</div>
+          <span style={{ fontSize:10, fontWeight:a?600:500, color:a?'#006400':'#8C8C8C', fontFamily:'Poppins,sans-serif' }}>{item.label}</span>
+          {a && <div style={{ width:4, height:4, borderRadius:'50%', background:'#006400' }} />}
+        </button>
+      );
+    })}
+  </div>
+);
+
+// ── HOME SCREEN ───────────────────────────────────────────────
+const HomeScreen = ({ onNavigate }) => {
+  const quickActions = [
+    { id:'send',   label:'Send Money',  labelBn:'টাকা পাঠান',  color:'#006400', bg:'#E8F5EC', icon:IC.send    },
+    { id:'jobs',   label:'Find Jobs',   labelBn:'চাকরি খুঁজুন', color:'#1A56DB', bg:'#E8F0FE', icon:IC.jobs    },
+    { id:'social', label:'Community',   labelBn:'সম্প্রদায়',   color:'#7C3AED', bg:'#F0EBFF', icon:IC.users   },
+    { id:'legal',  label:'Legal Help',  labelBn:'আইনি সাহায্য', color:'#CE1126', bg:'#F5E6E9', icon:IC.shield  },
+  ];
+  const transfers = [
+    { name:'Rina Begum',    method:'bKash', amount:'৳12,500', status:'Delivered',  sc:'#006400', sb:'#E8F5EC', date:'Today'     },
+    { name:'Karim Mia',     method:'Nagad', amount:'৳8,000',  status:'Processing', sc:'#C8881A', sb:'#FEF7E8', date:'Yesterday' },
+    { name:'Fatema Khatun', method:'Bank',  amount:'৳25,000', status:'Delivered',  sc:'#006400', sb:'#E8F5EC', date:'Apr 10'    },
+  ];
+  return (
+    <div style={{ background:'#F5F5F5' }}>
+      <div style={{ background:'#006400', padding:'20px 20px 32px', position:'relative', overflow:'hidden' }}>
+        <div style={{ position:'absolute', top:-40, right:-40, width:140, height:140, borderRadius:'50%', background:'rgba(206,17,38,0.18)' }} />
+        <div style={{ position:'relative' }}>
+          <div style={{ color:'rgba(255,255,255,0.75)', fontSize:13, fontWeight:500, marginBottom:4 }}>Available Balance</div>
+          <div style={{ color:'white', fontSize:36, fontWeight:800, letterSpacing:'-0.02em', lineHeight:1 }}>SAR 4,280</div>
+          <div style={{ color:'rgba(255,255,255,0.6)', fontSize:13, marginTop:4 }}>≈ ৳1,28,400</div>
+          <div style={{ marginTop:16, display:'flex', gap:8 }}>
+            <button onClick={() => onNavigate('send')} style={{ background:'white', color:'#006400', border:'none', borderRadius:8, padding:'9px 18px', fontFamily:'Poppins,sans-serif', fontWeight:700, fontSize:13, cursor:'pointer', display:'flex', alignItems:'center', gap:6 }}>{IC.arrow} Send Home</button>
+            <button style={{ background:'rgba(255,255,255,0.15)', color:'white', border:'1.5px solid rgba(255,255,255,0.3)', borderRadius:8, padding:'9px 16px', fontFamily:'Poppins,sans-serif', fontWeight:600, fontSize:13, cursor:'pointer' }}>Top Up</button>
+          </div>
+        </div>
+      </div>
+      <div style={{ padding:'0 16px', marginTop:-8 }}>
+        <div style={{ background:'white', borderRadius:16, padding:16, boxShadow:'0 2px 12px rgba(0,0,0,0.08)', display:'grid', gridTemplateColumns:'repeat(4,1fr)', gap:8 }}>
+          {quickActions.map(a => (
+            <button key={a.id} onClick={() => onNavigate(a.id)} style={{ background:'none', border:'none', cursor:'pointer', display:'flex', flexDirection:'column', alignItems:'center', gap:6, padding:'8px 4px' }}>
+              <div style={{ width:48, height:48, borderRadius:14, background:a.bg, display:'flex', alignItems:'center', justifyContent:'center', color:a.color }}>{a.icon}</div>
+              <span style={{ fontSize:11, fontWeight:600, color:'#1A1A1A', textAlign:'center', fontFamily:'Poppins,sans-serif', lineHeight:1.3 }}>{a.label}</span>
+              <span style={{ fontSize:11, color:'#8C8C8C', fontFamily:'Galada, serif', lineHeight:1.3, textAlign:'center' }}>{a.labelBn}</span>
+            </button>
+          ))}
+        </div>
+      </div>
+      <div style={{ margin:'14px 16px 0', background:'#F5E6E9', borderRadius:10, padding:'10px 14px', display:'flex', gap:10, alignItems:'flex-start' }}>
+        {IC.warn}
+        <div>
+          <div style={{ fontSize:12, fontWeight:700, color:'#CE1126' }}>Iqama expires in 14 days</div>
+          <div style={{ fontSize:11, color:'#5A5A5A', marginTop:2 }}>Renew your residence permit now. <span onClick={() => onNavigate('legal')} style={{ color:'#CE1126', fontWeight:600, cursor:'pointer' }}>Get legal help →</span></div>
+        </div>
+      </div>
+      <div style={{ margin:'14px 16px 0', background:'white', borderRadius:12, padding:14, boxShadow:'0 2px 8px rgba(0,0,0,0.06)' }}>
+        <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:10 }}>
+          <span style={{ fontSize:13, fontWeight:700, color:'#1A1A1A' }}>New Job Match</span>
+          <span onClick={() => onNavigate('jobs')} style={{ fontSize:12, fontWeight:600, color:'#006400', cursor:'pointer' }}>See all</span>
+        </div>
+        <div style={{ display:'flex', gap:12, alignItems:'center' }}>
+          <div style={{ width:44, height:44, borderRadius:10, background:'#E8F5EC', display:'flex', alignItems:'center', justifyContent:'center', color:'#006400', flexShrink:0 }}>{IC.jobs}</div>
+          <div style={{ flex:1 }}>
+            <div style={{ fontSize:14, fontWeight:700, color:'#1A1A1A' }}>Construction Foreman</div>
+            <div style={{ fontSize:12, color:'#5A5A5A', marginTop:2 }}>Al-Rashid Group · Dubai, UAE</div>
+            <div style={{ fontSize:12, fontWeight:700, color:'#F4A832', marginTop:4 }}>AED 2,200/mo · Free accommodation</div>
+          </div>
+          <button onClick={() => onNavigate('jobs')} style={{ background:'#006400', color:'white', border:'none', borderRadius:8, padding:'7px 12px', fontFamily:'Poppins,sans-serif', fontWeight:600, fontSize:12, cursor:'pointer' }}>Apply</button>
+        </div>
+      </div>
+      <div style={{ margin:'14px 16px 20px' }}>
+        <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:10 }}>
+          <span style={{ fontSize:13, fontWeight:700, color:'#1A1A1A' }}>Recent Transfers</span>
+          <span onClick={() => onNavigate('send')} style={{ fontSize:12, fontWeight:600, color:'#006400', cursor:'pointer' }}>View all</span>
+        </div>
+        <div style={{ background:'white', borderRadius:12, boxShadow:'0 2px 8px rgba(0,0,0,0.06)', overflow:'hidden' }}>
+          {transfers.map((t,i) => (
+            <div key={i} style={{ padding:'12px 14px', display:'flex', alignItems:'center', gap:12, borderBottom:i<2?'1px solid #F0F0F0':'none' }}>
+              <div style={{ width:38, height:38, borderRadius:'50%', background:'#E8F5EC', display:'flex', alignItems:'center', justifyContent:'center', fontWeight:700, fontSize:14, color:'#006400', flexShrink:0 }}>{t.name[0]}</div>
+              <div style={{ flex:1 }}>
+                <div style={{ fontSize:13, fontWeight:600, color:'#1A1A1A' }}>{t.name}</div>
+                <div style={{ fontSize:11, color:'#8C8C8C', marginTop:2 }}>{t.method} · {t.date}</div>
+              </div>
+              <div style={{ textAlign:'right' }}>
+                <div style={{ fontSize:14, fontWeight:700, color:'#1A1A1A' }}>{t.amount}</div>
+                <Badge label={t.status} color={t.sc} bg={t.sb} />
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+};
+
+// ── SEND MONEY ────────────────────────────────────────────────
+const SendMoneyScreen = ({ onBack }) => {
+  const [step, setStep] = useState(1);
+  const [form, setForm] = useState({ recipient:'', amount:'', method:'bKash', phone:'' });
+  const [sent, setSent] = useState(false);
+  const methods = ['bKash','Nagad','Bank Transfer','Rocket'];
+  const rate = 22.8;
+  const bdt = Math.round((parseFloat(form.amount)||0)*rate).toLocaleString();
+  const upd = (k,v) => setForm(f=>({...f,[k]:v}));
+  const FInput = ({ label, value, onChange, placeholder, type='text' }) => (
+    <div style={{ marginBottom:12 }}>
+      <label style={{ display:'block', fontSize:12, fontWeight:600, color:'#5A5A5A', marginBottom:6, fontFamily:'Poppins,sans-serif' }}>{label}</label>
+      <input type={type} value={value} onChange={e=>onChange(e.target.value)} placeholder={placeholder}
+        style={{ width:'100%', fontFamily:'Poppins,sans-serif', fontSize:14, padding:'10px 12px', border:'1.5px solid #C8C8C8', borderRadius:8, outline:'none', color:'#1A1A1A', background:'white' }}
+        onFocus={e=>{e.target.style.borderColor='#006400';e.target.style.boxShadow='0 0 0 3px rgba(0,100,0,0.12)';}}
+        onBlur={e=>{e.target.style.borderColor='#C8C8C8';e.target.style.boxShadow='none';}} />
+    </div>
+  );
+  const SD = ({ n }) => (
+    <div style={{ display:'flex', flexDirection:'column', alignItems:'center', gap:4 }}>
+      <div style={{ width:28, height:28, borderRadius:'50%', display:'flex', alignItems:'center', justifyContent:'center', background:step>=n?'#006400':'#E0E0E0', color:step>=n?'white':'#8C8C8C', fontWeight:700, fontSize:13 }}>{step>n?'✓':n}</div>
+      <span style={{ fontSize:10, color:step>=n?'#006400':'#8C8C8C', fontWeight:600, fontFamily:'Poppins,sans-serif' }}>{n===1?'Recipient':n===2?'Amount':'Confirm'}</span>
+    </div>
+  );
+  if (sent) return (
+    <div style={{ flex:1, display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'center', background:'#F5F5F5', padding:24, gap:16 }}>
+      <div style={{ width:72, height:72, borderRadius:'50%', background:'#E8F5EC', display:'flex', alignItems:'center', justifyContent:'center' }}>{IC.check}</div>
+      <div style={{ textAlign:'center' }}>
+        <div style={{ fontSize:20, fontWeight:800, color:'#1A1A1A' }}>Transfer Sent!</div>
+        <div style={{ fontSize:14, color:'#5A5A5A', marginTop:4 }}>SAR {form.amount} → ৳{bdt}</div>
+        <div style={{ fontSize:13, color:'#8C8C8C', marginTop:4 }}>To {form.recipient} via {form.method}</div>
+      </div>
+      <div style={{ background:'white', borderRadius:12, padding:'12px 16px', width:'100%', boxShadow:'0 2px 8px rgba(0,0,0,0.06)', fontSize:13, color:'#5A5A5A', textAlign:'center' }}>
+        Delivery: <strong style={{ color:'#006400' }}>within 2 hours</strong>
+      </div>
+      <button onClick={() => { setSent(false); setStep(1); setForm({recipient:'',amount:'',method:'bKash',phone:''}); onBack(); }} style={{ background:'#006400', color:'white', border:'none', borderRadius:8, padding:'12px 32px', fontFamily:'Poppins,sans-serif', fontWeight:700, fontSize:14, cursor:'pointer', width:'100%' }}>Done</button>
+    </div>
+  );
+  return (
+    <div style={{ flex:1, display:'flex', flexDirection:'column', background:'#F5F5F5', overflow:'hidden' }}>
+      <div style={{ background:'white', padding:'16px 20px', display:'flex', alignItems:'center', justifyContent:'center', boxShadow:'0 1px 4px rgba(0,0,0,0.06)' }}>
+        <SD n={1}/><div style={{ height:2, width:40, background:step>1?'#006400':'#E0E0E0', margin:'0 4px 16px' }}/><SD n={2}/><div style={{ height:2, width:40, background:step>2?'#006400':'#E0E0E0', margin:'0 4px 16px' }}/><SD n={3}/>
+      </div>
+      <div style={{ flex:1, overflowY:'auto', padding:16 }}>
+        {step===1 && <div style={{ background:'white', borderRadius:12, padding:16, boxShadow:'0 2px 8px rgba(0,0,0,0.06)' }}>
+          <div style={{ fontSize:13, fontWeight:700, color:'#1A1A1A', marginBottom:14 }}>Who are you sending to?</div>
+          <FInput label="Recipient Name" value={form.recipient} onChange={v=>upd('recipient',v)} placeholder="e.g. Rina Begum" />
+          <FInput label="Mobile (Bangladesh)" value={form.phone} onChange={v=>upd('phone',v)} placeholder="017X XXXX XXXX" />
+          <div style={{ fontSize:12, fontWeight:600, color:'#5A5A5A', marginBottom:8 }}>Transfer Method</div>
+          <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:8 }}>
+            {methods.map(m=><button key={m} onClick={()=>upd('method',m)} style={{ border:`2px solid ${form.method===m?'#006400':'#E0E0E0'}`, background:form.method===m?'#E8F5EC':'white', borderRadius:8, padding:'10px 8px', cursor:'pointer', fontFamily:'Poppins,sans-serif', fontWeight:600, fontSize:13, color:form.method===m?'#006400':'#1A1A1A' }}>{m}</button>)}
+          </div>
+        </div>}
+        {step===2 && <div style={{ background:'white', borderRadius:12, padding:16, boxShadow:'0 2px 8px rgba(0,0,0,0.06)' }}>
+          <div style={{ fontSize:13, fontWeight:700, color:'#1A1A1A', marginBottom:14 }}>How much to send?</div>
+          <FInput label="Amount (SAR)" value={form.amount} onChange={v=>upd('amount',v)} placeholder="0.00" type="number" />
+          <div style={{ background:'#E8F5EC', borderRadius:10, padding:'12px 14px' }}>
+            <div style={{ display:'flex', justifyContent:'space-between', marginBottom:6 }}>
+              <span style={{ fontSize:12, color:'#5A5A5A' }}>Exchange Rate</span>
+              <span style={{ fontSize:12, fontWeight:600 }}>1 SAR = ৳{rate}</span>
+            </div>
+            <div style={{ height:1, background:'#C8EDCF', margin:'8px 0' }}/>
+            <div style={{ display:'flex', justifyContent:'space-between' }}>
+              <span style={{ fontSize:13, fontWeight:700 }}>Recipient gets</span>
+              <span style={{ fontSize:15, fontWeight:800, color:'#006400' }}>৳{bdt}</span>
+            </div>
+          </div>
+        </div>}
+        {step===3 && <div style={{ background:'white', borderRadius:12, padding:16, boxShadow:'0 2px 8px rgba(0,0,0,0.06)' }}>
+          <div style={{ fontSize:13, fontWeight:700, color:'#1A1A1A', marginBottom:14 }}>Confirm Transfer</div>
+          {[['Recipient',form.recipient||'—'],['Mobile',form.phone||'—'],['Method',form.method],['Amount',`SAR ${form.amount||'0'}`],['Gets',`৳${bdt}`]].map(([k,v])=>(
+            <div key={k} style={{ display:'flex', justifyContent:'space-between', padding:'8px 0', borderBottom:'1px solid #F5F5F5' }}>
+              <span style={{ fontSize:12, color:'#5A5A5A' }}>{k}</span>
+              <span style={{ fontSize:12, fontWeight:600 }}>{v}</span>
+            </div>
+          ))}
+        </div>}
+      </div>
+      <div style={{ padding:'12px 16px 16px', background:'white', boxShadow:'0 -2px 8px rgba(0,0,0,0.06)', display:'flex', gap:10 }}>
+        {step>1 && <button onClick={()=>setStep(s=>s-1)} style={{ flex:1, background:'white', color:'#006400', border:'1.5px solid #006400', borderRadius:8, padding:12, fontFamily:'Poppins,sans-serif', fontWeight:600, fontSize:14, cursor:'pointer' }}>Back</button>}
+        <button onClick={()=>step<3?setStep(s=>s+1):setSent(true)} style={{ flex:2, background:'#006400', color:'white', border:'none', borderRadius:8, padding:12, fontFamily:'Poppins,sans-serif', fontWeight:700, fontSize:14, cursor:'pointer' }}>
+          {step===3?'Confirm & Send':'Continue'}
+        </button>
+      </div>
+    </div>
+  );
+};
+
+// ── JOBS SCREEN ───────────────────────────────────────────────
+const JOBS = [
+  { id:1, title:'Electrician',          company:'Al-Rashid Group',   location:'Riyadh, KSA',     salary:'SAR 1,800/mo', contract:'2yr', acc:true,  food:true,  verified:true  },
+  { id:2, title:'Construction Foreman', company:'Dubai Build Co.',   location:'Dubai, UAE',      salary:'AED 2,200/mo', contract:'3yr', acc:true,  food:false, verified:true  },
+  { id:3, title:'Housekeeping Staff',   company:'Grand Hyatt KL',    location:'KL, Malaysia',    salary:'MYR 1,400/mo', contract:'2yr', acc:true,  food:true,  verified:false },
+  { id:4, title:'Factory Operator',     company:'Samsung Electronics',location:'Johor, Malaysia',salary:'MYR 1,600/mo', contract:'2yr', acc:true,  food:false, verified:true  },
+  { id:5, title:'Security Guard',       company:'G4S Security',      location:'Abu Dhabi, UAE',  salary:'AED 1,500/mo', contract:'1yr', acc:true,  food:true,  verified:true  },
+];
+const JobsScreen = () => {
+  const [sel, setSel] = useState(null);
+  const [applied, setApplied] = useState(new Set());
+  if (sel) {
+    const j = JOBS.find(x=>x.id===sel), isApplied = applied.has(j.id);
+    return (
+      <div style={{ display:'flex', flexDirection:'column', background:'#F5F5F5', height:'100%', overflow:'hidden' }}>
+        <button onClick={()=>setSel(null)} style={{ margin:'14px 16px 0', background:'white', border:'none', borderRadius:10, padding:'10px 14px', display:'flex', alignItems:'center', gap:8, cursor:'pointer', fontFamily:'Poppins,sans-serif', fontSize:13, fontWeight:600, color:'#5A5A5A', boxShadow:'0 2px 6px rgba(0,0,0,0.06)', width:'fit-content' }}>{IC.back} Back</button>
+        <div style={{ flex:1, overflowY:'auto', padding:'14px 16px 16px' }}>
+          <div style={{ background:'#006400', borderRadius:14, padding:20, marginBottom:14 }}>
+            <div style={{ width:48, height:48, borderRadius:12, background:'rgba(255,255,255,0.2)', display:'flex', alignItems:'center', justifyContent:'center', color:'white', marginBottom:12 }}>{IC.jobs}</div>
+            <div style={{ fontSize:20, fontWeight:800, color:'white' }}>{j.title}</div>
+            <div style={{ fontSize:14, color:'rgba(255,255,255,0.75)', marginTop:4 }}>{j.company}</div>
+            <div style={{ fontSize:13, color:'rgba(255,255,255,0.6)', marginTop:2 }}>{j.location}</div>
+          </div>
+          <div style={{ background:'white', borderRadius:12, padding:16, boxShadow:'0 2px 8px rgba(0,0,0,0.06)' }}>
+            {[['Salary',j.salary],['Contract',j.contract],['Accommodation',j.acc?'✓ Provided':'✗ Not included'],['Food',j.food?'✓ Provided':'✗ Not included']].map(([k,v])=>(
+              <div key={k} style={{ display:'flex', justifyContent:'space-between', padding:'8px 0', borderBottom:'1px solid #F5F5F5' }}>
+                <span style={{ fontSize:12, color:'#5A5A5A' }}>{k}</span>
+                <span style={{ fontSize:12, fontWeight:600, color:v.startsWith('✓')?'#006400':v.startsWith('✗')?'#CE1126':'#1A1A1A' }}>{v}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+        <div style={{ padding:'12px 16px', background:'white', boxShadow:'0 -2px 8px rgba(0,0,0,0.06)' }}>
+          <button onClick={()=>setApplied(s=>new Set([...s,j.id]))} style={{ width:'100%', background:isApplied?'#E8F5EC':'#006400', color:isApplied?'#006400':'white', border:isApplied?'1.5px solid #006400':'none', borderRadius:8, padding:13, fontFamily:'Poppins,sans-serif', fontWeight:700, fontSize:14, cursor:'pointer' }}>
+            {isApplied?'✓ Application Submitted':'Apply Now'}
+          </button>
+        </div>
+      </div>
+    );
+  }
+  return (
+    <div style={{ display:'flex', flexDirection:'column', background:'#F5F5F5', height:'100%', overflow:'hidden' }}>
+      <div style={{ background:'white', padding:'12px 16px', boxShadow:'0 1px 4px rgba(0,0,0,0.06)' }}>
+        <div style={{ display:'flex', gap:8, alignItems:'center', background:'#F5F5F5', borderRadius:10, padding:'9px 12px' }}>{IC.search}<span style={{ fontSize:14, color:'#8C8C8C', fontFamily:'Poppins,sans-serif' }}>Search jobs…</span></div>
+      </div>
+      <div style={{ flex:1, overflowY:'auto', padding:'12px 16px 16px' }}>
+        <div style={{ fontSize:12, color:'#8C8C8C', marginBottom:10 }}>{JOBS.length} jobs found</div>
+        {JOBS.map(j=>(
+          <div key={j.id} onClick={()=>setSel(j.id)} style={{ background:'white', borderRadius:12, padding:14, boxShadow:'0 2px 8px rgba(0,0,0,0.06)', cursor:'pointer', marginBottom:10 }}>
+            <div style={{ display:'flex', gap:12, alignItems:'flex-start' }}>
+              <div style={{ width:44, height:44, borderRadius:10, background:'#E8F5EC', display:'flex', alignItems:'center', justifyContent:'center', color:'#006400', flexShrink:0 }}>{IC.jobs}</div>
+              <div style={{ flex:1 }}>
+                <div style={{ display:'flex', justifyContent:'space-between', alignItems:'flex-start' }}>
+                  <span style={{ fontSize:14, fontWeight:700, color:'#1A1A1A' }}>{j.title}</span>
+                  {j.verified&&<Badge label="VERIFIED" color="#006400" bg="#E8F5EC"/>}
+                </div>
+                <div style={{ fontSize:12, color:'#5A5A5A', marginTop:2 }}>{j.company} · {j.location}</div>
+                <div style={{ fontSize:13, fontWeight:700, color:'#F4A832', marginTop:6 }}>{j.salary}</div>
+                <div style={{ display:'flex', gap:6, marginTop:6, flexWrap:'wrap' }}>
+                  <Badge label={`${j.contract} contract`} color="#5A5A5A" bg="#F5F5F5"/>
+                  {j.acc&&<Badge label="Accommodation" color="#006400" bg="#E8F5EC"/>}
+                  {j.food&&<Badge label="Food" color="#C8881A" bg="#FEF7E8"/>}
+                </div>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+};
+
+// ── SOCIAL HUB ────────────────────────────────────────────────
+const SocialScreen = () => {
+  const [liked, setLiked] = useState(new Set());
+  const [compose, setCompose] = useState(false);
+  const [text, setText] = useState('');
+  const posts = [
+    { id:1, user:'Karim M.',  loc:'Riyadh, KSA',       time:'2h ago',  text:'Anyone know a good halal restaurant near Olaya district? New arrival, need help!',                           likes:14, replies:5,  av:'K', color:'#006400' },
+    { id:2, user:'Nasrin A.', loc:'Kuala Lumpur',       time:'5h ago',  text:'My iqama was renewed in 3 days using the Probashi legal service. Highly recommend to everyone!',              likes:42, replies:11, av:'N', color:'#1A56DB' },
+    { id:3, user:'Rahim S.',  loc:'Dubai, UAE',         time:'1d ago',  text:'Free Arabic course on Skills tab — completed module 3 today. My employer noticed already 🙌',                 likes:67, replies:20, av:'R', color:'#7C3AED' },
+    { id:4, user:'Mina B.',   loc:'Singapore',          time:'2d ago',  text:'পরিবারকে মিস করছি। কিন্তু আলহামদুলিল্লাহ, এই মাসে ভালো আয় হয়েছে।',                                         likes:98, replies:33, av:'M', color:'#C8881A' },
+  ];
+  return (
+    <div style={{ background:'#F5F5F5' }}>
+      <div style={{ background:'linear-gradient(135deg,#006400,#004d00)', padding:'18px 18px 22px', position:'relative', overflow:'hidden' }}>
+        <div style={{ position:'absolute', top:-24, right:-24, width:100, height:100, borderRadius:'50%', background:'rgba(206,17,38,0.25)' }}/>
+        <div style={{ fontSize:12, color:'rgba(255,255,255,0.7)', marginBottom:3, fontFamily:'Galada, serif', fontSize:16 }}>আপনার সম্প্রদায়</div>
+        <div style={{ fontSize:18, fontWeight:800, color:'white', lineHeight:1.2, marginBottom:10 }}>3,241 Bangladeshis near you</div>
+        <div style={{ display:'flex', gap:8 }}>
+          <button onClick={()=>setCompose(true)} style={{ background:'white', color:'#006400', border:'none', borderRadius:8, padding:'8px 14px', fontFamily:'Poppins,sans-serif', fontWeight:700, fontSize:12, cursor:'pointer' }}>+ Post</button>
+          <button style={{ background:'rgba(255,255,255,0.15)', color:'white', border:'1.5px solid rgba(255,255,255,0.3)', borderRadius:8, padding:'8px 14px', fontFamily:'Poppins,sans-serif', fontWeight:600, fontSize:12, cursor:'pointer' }}>Find nearby</button>
+        </div>
+      </div>
+      {compose && (
+        <div style={{ background:'white', margin:'12px 14px 0', borderRadius:14, padding:14, boxShadow:'0 4px 16px rgba(0,0,0,0.08)' }}>
+          <textarea value={text} onChange={e=>setText(e.target.value)} placeholder="Share with your community… (English or বাংলা)" style={{ width:'100%', fontFamily:'Poppins,sans-serif', fontSize:13, border:'none', outline:'none', resize:'none', color:'#111', lineHeight:1.6, minHeight:60 }} />
+          <div style={{ display:'flex', justifyContent:'flex-end', gap:8, marginTop:8 }}>
+            <button onClick={()=>{setCompose(false);setText('');}} style={{ background:'none', border:'none', cursor:'pointer', fontSize:13, fontWeight:600, color:'#888', fontFamily:'Poppins,sans-serif' }}>Cancel</button>
+            <button onClick={()=>{setCompose(false);setText('');}} style={{ background:'#006400', color:'white', border:'none', borderRadius:8, padding:'7px 16px', fontFamily:'Poppins,sans-serif', fontWeight:700, fontSize:13, cursor:'pointer' }}>Post</button>
+          </div>
+        </div>
+      )}
+      <div style={{ padding:'12px 14px 16px', display:'flex', flexDirection:'column', gap:10 }}>
+        {posts.map(p=>(
+          <div key={p.id} style={{ background:'white', borderRadius:14, padding:14, boxShadow:'0 2px 8px rgba(0,0,0,0.05)' }}>
+            <div style={{ display:'flex', gap:10, marginBottom:10, alignItems:'flex-start' }}>
+              <div style={{ width:36, height:36, borderRadius:'50%', background:p.color, display:'flex', alignItems:'center', justifyContent:'center', fontWeight:700, fontSize:14, color:'white', flexShrink:0 }}>{p.av}</div>
+              <div style={{ flex:1 }}>
+                <div style={{ display:'flex', justifyContent:'space-between' }}>
+                  <span style={{ fontSize:13, fontWeight:700, color:'#111' }}>{p.user}</span>
+                  <span style={{ fontSize:11, color:'#aaa' }}>{p.time}</span>
+                </div>
+                <div style={{ fontSize:11, color:'#888' }}>{p.loc}</div>
+              </div>
+            </div>
+            <p style={{ fontSize:13, color:'#333', lineHeight:1.55, marginBottom:10, fontFamily:p.id===4?'Noto Sans Bengali,serif':'Poppins,sans-serif' }}>{p.text}</p>
+            <div style={{ display:'flex', gap:16, borderTop:'1px solid #f5f5f5', paddingTop:10 }}>
+              <button onClick={()=>setLiked(s=>{const n=new Set(s);n.has(p.id)?n.delete(p.id):n.add(p.id);return n;})} style={{ background:'none', border:'none', cursor:'pointer', display:'flex', alignItems:'center', gap:5, fontSize:12, fontWeight:600, color:liked.has(p.id)?'#CE1126':'#888', fontFamily:'Poppins,sans-serif' }}>
+                <svg width="15" height="15" viewBox="0 0 24 24" fill={liked.has(p.id)?'#CE1126':'none'} stroke={liked.has(p.id)?'#CE1126':'#aaa'} strokeWidth="2" strokeLinecap="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+                {p.likes+(liked.has(p.id)?1:0)}
+              </button>
+              <button style={{ background:'none', border:'none', cursor:'pointer', display:'flex', alignItems:'center', gap:5, fontSize:12, fontWeight:600, color:'#888', fontFamily:'Poppins,sans-serif' }}>
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#aaa" strokeWidth="2" strokeLinecap="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                {p.replies}
+              </button>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+};
+
+// ── LEGAL GUARDIAN ────────────────────────────────────────────
+const LegalScreen = () => {
+  const [open, setOpen] = useState(null);
+  const docs = [
+    { n:'Passport',            num:'A1234567',   exp:'2028-03-15', s:'valid'    },
+    { n:'Iqama (KSA)',         num:'IQ-9821034', exp:'2026-05-04', s:'expiring' },
+    { n:'Work Visa',           num:'WV-00482',   exp:'2026-07-12', s:'valid'    },
+    { n:'Medical Certificate', num:'MC-2025',    exp:'2025-12-01', s:'expired'  },
+  ];
+  const st = { valid:['#006400','#E8F5EC','VALID'], expiring:['#C8881A','#FEF7E8','EXPIRING'], expired:['#CE1126','#F5E6E9','EXPIRED'] };
+  const services = [
+    { icon:IC.shield,  title:'Legal Guardian',    sub:'Dedicated advisor for your rights',     color:'#1A56DB', bg:'#E8F0FE' },
+    { icon:IC.docs,    title:'Contract Review',   sub:'Verify your employment contract',       color:'#7C3AED', bg:'#F0EBFF' },
+    { icon:<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.7 12a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.61 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 9.91a16 16 0 0 0 6.07 6.07l.95-.95a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 17z"/></svg>, title:'Emergency Legal', sub:'24/7 hotline for urgent issues', color:'#CE1126', bg:'#F5E6E9' },
+    { icon:<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>, title:'Embassy Links', sub:'BD Embassy contacts & forms', color:'#006400', bg:'#E8F5EC' },
+  ];
+  return (
+    <div style={{ background:'#F5F5F5' }}>
+      <div style={{ background:'linear-gradient(135deg,#1A56DB,#1240b0)', padding:'18px 18px 22px', position:'relative', overflow:'hidden' }}>
+        <div style={{ position:'absolute', top:-24, right:-24, width:100, height:100, borderRadius:'50%', background:'rgba(206,17,38,0.2)' }}/>
+        <div style={{ fontSize:16, color:'rgba(255,255,255,0.7)', marginBottom:3, fontFamily:'Galada, serif' }}>আপনার অধিকার রক্ষা করুন</div>
+        <div style={{ fontSize:18, fontWeight:800, color:'white', lineHeight:1.3, marginBottom:10 }}>Legal Guardian<br/>Always on your side</div>
+        <button style={{ background:'white', color:'#1A56DB', border:'none', borderRadius:8, padding:'8px 14px', fontFamily:'Poppins,sans-serif', fontWeight:700, fontSize:12, cursor:'pointer' }}>Talk to advisor</button>
+      </div>
+      <div style={{ padding:'14px 14px 20px', display:'flex', flexDirection:'column', gap:12 }}>
+        <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:10 }}>
+          {services.map(s=>(
+            <div key={s.title} style={{ background:s.bg, borderRadius:12, padding:'13px 12px', cursor:'pointer' }}>
+              <div style={{ color:s.color, marginBottom:8 }}>{s.icon}</div>
+              <div style={{ fontSize:12, fontWeight:700, color:s.color, lineHeight:1.3 }}>{s.title}</div>
+              <div style={{ fontSize:10, color:'#666', marginTop:3, lineHeight:1.4 }}>{s.sub}</div>
+            </div>
+          ))}
+        </div>
+        <div style={{ background:'white', borderRadius:12, padding:16, boxShadow:'0 2px 8px rgba(0,0,0,0.06)' }}>
+          <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:12 }}>
+            <span style={{ fontSize:13, fontWeight:700, color:'#1A1A1A' }}>Documents</span>
+            <Badge label="1 expiring" color="#C8881A" bg="#FEF7E8"/>
+          </div>
+          {docs.map((d,i)=>{
+            const [c,bg,label]=st[d.s];
+            return (
+              <div key={d.n} onClick={()=>setOpen(open===i?null:i)} style={{ padding:'10px 0', borderBottom:i<docs.length-1?'1px solid #F5F5F5':'none', cursor:'pointer' }}>
+                <div style={{ display:'flex', alignItems:'center', gap:10 }}>
+                  <div style={{ width:34, height:34, borderRadius:8, background:bg, display:'flex', alignItems:'center', justifyContent:'center', color:c, flexShrink:0 }}>{IC.docs}</div>
+                  <div style={{ flex:1 }}>
+                    <div style={{ fontSize:13, fontWeight:700, color:'#1A1A1A' }}>{d.n}</div>
+                    <div style={{ fontSize:10, color:'#aaa', marginTop:1 }}>Exp: {d.exp}</div>
+                  </div>
+                  <Badge label={label} color={c} bg={bg}/>
+                </div>
+                {open===i && (
+                  <div style={{ marginTop:10, paddingLeft:44 }}>
+                    <div style={{ fontSize:11, color:'#666', marginBottom:8 }}>No. {d.num}</div>
+                    {d.s==='expiring'&&<button style={{ background:'#1A56DB', color:'white', border:'none', borderRadius:6, padding:'7px 14px', fontFamily:'Poppins,sans-serif', fontWeight:600, fontSize:12, cursor:'pointer' }}>Renew with Guardian</button>}
+                    {d.s==='expired'&&<button style={{ background:'#CE1126', color:'white', border:'none', borderRadius:6, padding:'7px 14px', fontFamily:'Poppins,sans-serif', fontWeight:600, fontSize:12, cursor:'pointer' }}>Urgent: Renew Now</button>}
+                  </div>
+                )}
+              </div>
+            );
+          })}
+        </div>
+      </div>
+    </div>
+  );
+};
+
+// ── VOICE SKILLS ──────────────────────────────────────────────
+const VoiceSkillsScreen = () => {
+  const [recording, setRecording] = useState(false);
+  const [pulse, setPulse] = useState(false);
+  const [transcript, setTranscript] = useState('');
+  const [lesson, setLesson] = useState(null);
+  const timerRef = useRef(null);
+
+  const startRec = () => {
+    setRecording(true); setTranscript('');
+    let count = 0;
+    timerRef.current = setInterval(() => { setPulse(p=>!p); count++; if (count>=4) { clearInterval(timerRef.current); setRecording(false); setTranscript('كيف حالك؟ (How are you?)'); }}, 500);
+  };
+
+  const courses = [
+    { lang:'Arabic',  flag:'🇸🇦', level:'Beginner',     progress:65, color:'#006400', bg:'#E8F5EC' },
+    { lang:'Malay',   flag:'🇲🇾', level:'Intermediate', progress:30, color:'#1A56DB', bg:'#E8F0FE' },
+    { lang:'English', flag:'🇬🇧', level:'Advanced',     progress:82, color:'#7C3AED', bg:'#F0EBFF' },
+  ];
+  const skills = [
+    { icon:'🔧', title:'Electrical Safety', tag:'Cert',    color:'#C8881A', bg:'#FEF7E8' },
+    { icon:'💰', title:'Financial Literacy',tag:'New',     color:'#006400', bg:'#E8F5EC' },
+    { icon:'🏥', title:'First Aid Basics',  tag:'Popular', color:'#CE1126', bg:'#F5E6E9' },
+    { icon:'📱', title:'Digital Skills',    tag:'Free',    color:'#1A56DB', bg:'#E8F0FE' },
+  ];
+
+  if (lesson !== null) {
+    const c = courses[lesson];
+    return (
+      <div style={{ background:'#F5F5F5' }}>
+        <button onClick={()=>{setLesson(null);setTranscript('');setRecording(false);clearInterval(timerRef.current);}} style={{ margin:'14px 16px 0', background:'white', border:'none', borderRadius:10, padding:'10px 14px', display:'flex', alignItems:'center', gap:8, cursor:'pointer', fontFamily:'Poppins,sans-serif', fontSize:13, fontWeight:600, color:'#5A5A5A', boxShadow:'0 2px 6px rgba(0,0,0,0.06)' }}>{IC.back} Back to Skills</button>
+        <div style={{ padding:'14px 16px 20px', display:'flex', flexDirection:'column', gap:12 }}>
+          <div style={{ background:`linear-gradient(135deg,${c.color},${c.color}cc)`, borderRadius:14, padding:20, color:'white' }}>
+            <div style={{ fontSize:28, marginBottom:6 }}>{c.flag}</div>
+            <div style={{ fontSize:18, fontWeight:800 }}>{c.lang} · {c.level}</div>
+            <div style={{ fontSize:12, opacity:0.8, marginTop:3 }}>Module 8 of 12</div>
+            <div style={{ marginTop:12, background:'rgba(255,255,255,0.2)', borderRadius:9999, height:6, overflow:'hidden' }}>
+              <div style={{ width:`${c.progress}%`, height:'100%', background:'#fff', borderRadius:9999 }}/>
+            </div>
+            <div style={{ fontSize:11, opacity:0.75, marginTop:4 }}>{c.progress}% complete</div>
+          </div>
+          <div style={{ background:'white', borderRadius:12, padding:'20px 16px', boxShadow:'0 2px 10px rgba(0,0,0,0.06)', textAlign:'center' }}>
+            <div style={{ fontSize:12, fontWeight:600, color:'#888', marginBottom:6 }}>VOICE PRACTICE</div>
+            <div style={{ fontSize:15, fontWeight:700, color:'#111', marginBottom:4 }}>Repeat this phrase:</div>
+            <div style={{ fontSize:22, fontWeight:800, color:c.color, marginBottom:20, fontFamily:'serif' }}>مرحباً كيف حالك</div>
+            <button onClick={startRec} disabled={recording}
+              style={{ width:72, height:72, borderRadius:'50%', background:recording?'#CE1126':c.color, border:'none', cursor:'pointer', display:'flex', alignItems:'center', justifyContent:'center', margin:'0 auto', color:'white', boxShadow:recording?`0 0 0 8px ${c.color}33`:'0 4px 16px rgba(0,0,0,0.15)', transform:recording&&pulse?'scale(1.08)':'scale(1)', transition:'transform 200ms' }}>
+              {IC.mic}
+            </button>
+            {recording && <div style={{ fontSize:12, color:'#CE1126', fontWeight:600, marginTop:10 }}>Listening…</div>}
+            {transcript && !recording && <div style={{ marginTop:12, background:'#E8F5EC', borderRadius:10, padding:10, fontSize:13, color:'#006400', fontWeight:600 }}>✓ Recognized: {transcript}</div>}
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div style={{ background:'#F5F5F5' }}>
+      <div style={{ background:'linear-gradient(135deg,#7C3AED,#5b21b6)', padding:'18px 18px 22px', position:'relative', overflow:'hidden' }}>
+        <div style={{ position:'absolute', top:-24, right:-24, width:100, height:100, borderRadius:'50%', background:'rgba(206,17,38,0.2)' }}/>
+        <div style={{ fontSize:16, color:'rgba(255,255,255,0.7)', marginBottom:3, fontFamily:'Galada, serif' }}>দক্ষতা বাড়ান</div>
+        <div style={{ fontSize:18, fontWeight:800, color:'white', lineHeight:1.3 }}>Voice Language Training</div>
+        <div style={{ fontSize:12, color:'rgba(255,255,255,0.7)', marginTop:4 }}>Speak. Get feedback. Grow.</div>
+      </div>
+      <div style={{ padding:'14px 14px 20px', display:'flex', flexDirection:'column', gap:12 }}>
+        <div>
+          <div style={{ fontSize:13, fontWeight:700, color:'#111', marginBottom:10 }}>Language Courses</div>
+          <div style={{ display:'flex', flexDirection:'column', gap:8 }}>
+            {courses.map((c,i)=>(
+              <div key={c.lang} onClick={()=>setLesson(i)} style={{ background:'white', borderRadius:12, padding:14, boxShadow:'0 2px 8px rgba(0,0,0,0.05)', display:'flex', alignItems:'center', gap:12, cursor:'pointer' }}>
+                <div style={{ width:44, height:44, borderRadius:12, background:c.bg, display:'flex', alignItems:'center', justifyContent:'center', fontSize:22, flexShrink:0 }}>{c.flag}</div>
+                <div style={{ flex:1 }}>
+                  <div style={{ display:'flex', justifyContent:'space-between' }}>
+                    <span style={{ fontSize:14, fontWeight:700, color:'#111' }}>{c.lang}</span>
+                    <span style={{ fontSize:11, fontWeight:600, color:c.color }}>{c.progress}%</span>
+                  </div>
+                  <div style={{ fontSize:11, color:'#888', marginBottom:6 }}>{c.level}</div>
+                  <div style={{ height:5, background:'#f0f0f0', borderRadius:9999, overflow:'hidden' }}>
+                    <div style={{ width:`${c.progress}%`, height:'100%', background:c.color, borderRadius:9999 }}/>
+                  </div>
+                </div>
+                <div style={{ color:'#ccc' }}>{IC.chev}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+        <div>
+          <div style={{ fontSize:13, fontWeight:700, color:'#111', marginBottom:10 }}>Vocational Skills</div>
+          <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:8 }}>
+            {skills.map(s=>(
+              <div key={s.title} style={{ background:s.bg, borderRadius:12, padding:'13px 12px', cursor:'pointer' }}>
+                <div style={{ fontSize:22, marginBottom:6 }}>{s.icon}</div>
+                <div style={{ fontSize:12, fontWeight:700, color:s.color, lineHeight:1.3 }}>{s.title}</div>
+                <span style={{ fontSize:10, fontWeight:700, background:'rgba(255,255,255,0.6)', color:s.color, padding:'2px 7px', borderRadius:9999, marginTop:4, display:'inline-block' }}>{s.tag}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+// ── MORE SCREEN ───────────────────────────────────────────────
+const MoreScreen = ({ onNavigate }) => {
+  const items = [
+    { id:'social', icon:IC.users,  label:'Social Hub',     labelBn:'সামাজিক',     color:'#7C3AED', bg:'#F0EBFF', badge:null           },
+    { id:'legal',  icon:IC.shield, label:'Legal Guardian', labelBn:'আইনি সাহায্য', color:'#1A56DB', bg:'#E8F0FE', badge:'1 alert'      },
+    { id:'skills', icon:IC.mic,    label:'Voice Skills',   labelBn:'দক্ষতা',       color:'#7C3AED', bg:'#F0EBFF', badge:'3 new modules' },
+    { id:'docs',   icon:IC.docs,   label:'Documents',      labelBn:'কাগজপত্র',     color:'#C8881A', bg:'#FEF7E8', badge:'1 expiring'   },
+  ];
+  return (
+    <div style={{ background:'#F5F5F5', padding:16 }}>
+      <div style={{ fontSize:11, fontWeight:700, color:'#8C8C8C', textTransform:'uppercase', letterSpacing:'0.07em', marginBottom:12 }}>More Features</div>
+      <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:10 }}>
+        {items.map(item=>(
+          <button key={item.id} onClick={()=>onNavigate(item.id)} style={{ background:'white', border:'none', borderRadius:14, padding:'16px 14px', boxShadow:'0 2px 8px rgba(0,0,0,0.06)', cursor:'pointer', display:'flex', flexDirection:'column', gap:8, alignItems:'flex-start', textAlign:'left' }}>
+            <div style={{ width:48, height:48, borderRadius:14, background:item.bg, display:'flex', alignItems:'center', justifyContent:'center', color:item.color }}>{item.icon}</div>
+            <div>
+              <div style={{ fontSize:14, fontWeight:700, color:'#1A1A1A', fontFamily:'Poppins,sans-serif' }}>{item.label}</div>
+              <div style={{ fontSize:11, color:'#8C8C8C', fontFamily:'Noto Sans Bengali,serif' }}>{item.labelBn}</div>
+            </div>
+            {item.badge && <Badge label={item.badge} color={item.color} bg={item.bg}/>}
+          </button>
+        ))}
+      </div>
+      <div style={{ marginTop:12, background:'white', borderRadius:14, padding:'14px 16px', boxShadow:'0 2px 8px rgba(0,0,0,0.06)' }}>
+        <div style={{ fontSize:12, fontWeight:700, color:'#8C8C8C', textTransform:'uppercase', letterSpacing:'0.07em', marginBottom:12 }}>Quick Links</div>
+        {[['🔔','Notifications','2 unread'],['📞','Emergency Hotline','24/7 support'],['🌐','Language','English / বাংলা'],['❓','Help & FAQ','']].map(([icon,label,val])=>(
+          <div key={label} style={{ display:'flex', alignItems:'center', gap:10, padding:'10px 0', borderBottom:'1px solid #F5F5F5', cursor:'pointer' }}>
+            <span style={{ fontSize:18 }}>{icon}</span>
+            <span style={{ flex:1, fontSize:13, fontWeight:600, color:'#1A1A1A' }}>{label}</span>
+            {val && <span style={{ fontSize:11, color:'#8C8C8C' }}>{val}</span>}
+            <div style={{ color:'#ddd' }}>{IC.chev}</div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+};
+
+// ── PROFILE SCREEN ────────────────────────────────────────────
+const ProfileScreen = () => {
+  const [tab, setTab] = useState('profile');
+  const docs = [
+    { n:'Passport',            num:'A1234567',   exp:'2028-03-15', s:'valid'    },
+    { n:'Iqama (KSA)',         num:'IQ-9821034', exp:'2026-05-04', s:'expiring' },
+    { n:'Work Visa',           num:'WV-00482',   exp:'2026-07-12', s:'valid'    },
+    { n:'Medical Certificate', num:'MC-2025',    exp:'2025-12-01', s:'expired'  },
+  ];
+  const st = { valid:['#006400','#E8F5EC','VALID'], expiring:['#C8881A','#FEF7E8','EXPIRING'], expired:['#CE1126','#F5E6E9','EXPIRED'] };
+  return (
+    <div style={{ background:'#F5F5F5' }}>
+      <div style={{ background:'#006400', padding:'20px 20px 28px', position:'relative', overflow:'hidden' }}>
+        <div style={{ position:'absolute', top:-30, right:-30, width:120, height:120, borderRadius:'50%', background:'rgba(206,17,38,0.15)' }}/>
+        <div style={{ display:'flex', gap:14, alignItems:'center', position:'relative' }}>
+          <div style={{ width:64, height:64, borderRadius:'50%', background:'#CE1126', display:'flex', alignItems:'center', justifyContent:'center', fontSize:24, fontWeight:800, color:'white', flexShrink:0 }}>R</div>
+          <div>
+            <div style={{ fontSize:18, fontWeight:800, color:'white' }}>Rafiqul Islam</div>
+            <div style={{ fontSize:13, color:'rgba(255,255,255,0.75)', marginTop:2 }}>Electrician · Riyadh, KSA</div>
+            <div style={{ display:'flex', gap:6, marginTop:8 }}>
+              <Badge label="VERIFIED" color="#006400" bg="rgba(255,255,255,0.15)"/>
+              <Badge label="3 YRS ABROAD" color="#F4A832" bg="rgba(244,168,50,0.2)"/>
+            </div>
+          </div>
+        </div>
+        <div style={{ marginTop:16, display:'grid', gridTemplateColumns:'repeat(3,1fr)', gap:8, position:'relative' }}>
+          {[['SAR 4,280','Balance'],['৳1.2L','Sent home'],['12','Transfers']].map(([v,l])=>(
+            <div key={l} style={{ background:'rgba(255,255,255,0.12)', borderRadius:10, padding:'10px 8px', textAlign:'center' }}>
+              <div style={{ fontSize:15, fontWeight:800, color:'white' }}>{v}</div>
+              <div style={{ fontSize:10, color:'rgba(255,255,255,0.65)', marginTop:2 }}>{l}</div>
+            </div>
+          ))}
+        </div>
+      </div>
+      <div style={{ background:'white', display:'flex', borderBottom:'1px solid #E0E0E0' }}>
+        {[['profile','Profile'],['docs','Documents'],['settings','Settings']].map(([id,label])=>(
+          <button key={id} onClick={()=>setTab(id)} style={{ flex:1, padding:'12px 0', border:'none', background:'none', cursor:'pointer', fontFamily:'Poppins,sans-serif', fontSize:13, fontWeight:tab===id?700:500, color:tab===id?'#006400':'#8C8C8C', borderBottom:tab===id?'2.5px solid #006400':'2.5px solid transparent' }}>{label}</button>
+        ))}
+      </div>
+      <div style={{ padding:16 }}>
+        {tab==='profile' && (
+          <div style={{ background:'white', borderRadius:12, padding:16, boxShadow:'0 2px 8px rgba(0,0,0,0.06)' }}>
+            {[['Full Name','Rafiqul Islam'],['Date of Birth','12 Mar 1990'],['Nationality','🇧🇩 Bangladeshi'],['Mobile','+966 55 123 4567'],['Home District','Sylhet, BD']].map(([k,v])=>(
+              <div key={k} style={{ display:'flex', justifyContent:'space-between', padding:'8px 0', borderBottom:'1px solid #F5F5F5' }}>
+                <span style={{ fontSize:12, color:'#5A5A5A' }}>{k}</span>
+                <span style={{ fontSize:12, fontWeight:600, color:'#1A1A1A' }}>{v}</span>
+              </div>
+            ))}
+          </div>
+        )}
+        {tab==='docs' && (
+          <div style={{ display:'flex', flexDirection:'column', gap:10 }}>
+            {docs.map((d,i)=>{
+              const [c,bg,label]=st[d.s];
+              return (
+                <div key={d.n} style={{ background:'white', borderRadius:12, padding:'12px 14px', boxShadow:'0 2px 8px rgba(0,0,0,0.06)', display:'flex', alignItems:'center', gap:10 }}>
+                  <div style={{ width:36, height:36, borderRadius:8, background:bg, display:'flex', alignItems:'center', justifyContent:'center', color:c, flexShrink:0 }}>{IC.docs}</div>
+                  <div style={{ flex:1 }}>
+                    <div style={{ fontSize:13, fontWeight:700, color:'#1A1A1A' }}>{d.n}</div>
+                    <div style={{ fontSize:10, color:'#aaa', marginTop:1 }}>Exp: {d.exp}</div>
+                  </div>
+                  <Badge label={label} color={c} bg={bg}/>
+                </div>
+              );
+            })}
+          </div>
+        )}
+        {tab==='settings' && (
+          <div style={{ display:'flex', flexDirection:'column', gap:10 }}>
+            {[['🌐','Language','English / বাংলা'],['🔔','Notifications','On'],['🔒','PIN & Security','Enabled'],['💬','Help & Support',''],['ℹ️','About Probashi','v2.4.1']].map(([icon,label,val])=>(
+              <div key={label} style={{ background:'white', borderRadius:12, padding:'14px 16px', boxShadow:'0 2px 6px rgba(0,0,0,0.04)', display:'flex', alignItems:'center', gap:12, cursor:'pointer' }}>
+                <span style={{ fontSize:20 }}>{icon}</span>
+                <span style={{ flex:1, fontSize:14, fontWeight:600, color:'#1A1A1A' }}>{label}</span>
+                <span style={{ fontSize:12, color:'#8C8C8C' }}>{val}</span>
+                <div style={{ color:'#ddd' }}>{IC.chev}</div>
+              </div>
+            ))}
+            <button style={{ background:'#F5E6E9', color:'#CE1126', border:'none', borderRadius:12, padding:14, fontFamily:'Poppins,sans-serif', fontWeight:700, fontSize:14, cursor:'pointer', marginTop:4 }}>Sign Out</button>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+};
+
+// ── APP ROOT ─────────────────────────────────────────────────
+const ALL = ['home','send','jobs','more','profile','social','legal','skills','docs'];
+const SHOW_BACK = ['send','social','legal','skills','docs'];
+const BACK_TITLE = { send:'Send Money', social:'Community Hub', legal:'Legal Guardian', skills:'Voice Skills', docs:'Documents' };
+const PARENT = { social:'more', legal:'more', skills:'more', docs:'more', send:'home' };
+
+const App = () => {
+  const saved = localStorage.getItem('pb_screen');
+  const [screen, setScreen] = useState(ALL.includes(saved)?saved:'home');
+  useEffect(()=>{ localStorage.setItem('pb_screen', screen); }, [screen]);
+
+  const showBack = SHOW_BACK.includes(screen);
+  const onBack = () => setScreen(PARENT[screen]||'home');
+
+  return (
+    <React.Fragment>
+      {/* Status bar */}
+      <div style={{ background:'#006400', padding:'8px 24px 4px', display:'flex', justifyContent:'space-between', alignItems:'center', flexShrink:0 }}>
+        <span style={{ color:'white', fontSize:12, fontWeight:700 }}>9:41</span>
+        <div style={{ display:'flex', gap:5, alignItems:'center' }}>
+          <svg width="14" height="10" viewBox="0 0 24 16" fill="none"><rect x="0" y="2" width="20" height="11" rx="2" stroke="white" fill="none" strokeWidth="2"/><rect x="21" y="4" width="2" height="7" rx="1" fill="white"/><rect x="1" y="3" width="15" height="9" rx="1" fill="white"/></svg>
+        </div>
+      </div>
+      <Header showBack={showBack} title={BACK_TITLE[screen]||''} onBack={onBack}/>
+      <div style={{ flex:1, display:'flex', flexDirection:'column', overflow:'hidden' }}>
+        {screen==='home'    && <div className="scroll"><HomeScreen onNavigate={setScreen}/></div>}
+        {screen==='send'    && <SendMoneyScreen onBack={onBack}/>}
+        {screen==='jobs'    && <div style={{ flex:1, display:'flex', flexDirection:'column', overflow:'hidden' }}><JobsScreen/></div>}
+        {screen==='more'    && <div className="scroll"><MoreScreen onNavigate={setScreen}/></div>}
+        {screen==='profile' && <div className="scroll"><ProfileScreen/></div>}
+        {screen==='social'  && <div className="scroll"><SocialScreen/></div>}
+        {screen==='legal'   && <div className="scroll"><LegalScreen/></div>}
+        {screen==='skills'  && <div className="scroll"><VoiceSkillsScreen/></div>}
+        {screen==='docs'    && <div className="scroll"><LegalScreen/></div>}
+      </div>
+      <BottomNav active={['more','social','legal','skills','docs'].includes(screen)?'more':screen} onNavigate={setScreen}/>
+    </React.Fragment>
+  );
+};
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
+</script>
+</body>
+</html>

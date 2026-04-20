@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html><head><meta charset="UTF-8">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'Poppins', sans-serif; background: #fff; padding: 20px 24px; }
+.grid { display: flex; gap: 6px; align-items: flex-end; flex-wrap: wrap; margin-bottom: 20px; }
+.token { display: flex; flex-direction: column; align-items: center; gap: 4px; }
+.bar { background: #006400; border-radius: 3px; width: 32px; }
+.val { font-size: 10px; font-weight: 600; color: #1a1a1a; }
+.sub { font-size: 9px; color: #8c8c8c; }
+.label { font-size: 10px; font-weight: 600; color: #8c8c8c; letter-spacing: .06em; text-transform: uppercase; margin-bottom: 8px; }
+.inuse { display: flex; flex-direction: column; gap: 8px; }
+.inuse-row { display: flex; align-items: center; gap: 10px; }
+.inuse-label { font-size: 11px; color: #5a5a5a; width: 80px; }
+.inuse-bar { background: #E8F5EC; border-radius: 3px; height: 18px; display: flex; align-items: center; padding: 0 8px; }
+.inuse-txt { font-size: 10px; font-weight: 600; color: #006400; }
+</style>
+</head><body>
+<div class="label">Spacing Scale (base 4px)</div>
+<div class="grid">
+  <div class="token"><div class="bar" style="height:4px"></div><div class="val">4</div><div class="sub">–1</div></div>
+  <div class="token"><div class="bar" style="height:8px"></div><div class="val">8</div><div class="sub">–2</div></div>
+  <div class="token"><div class="bar" style="height:12px"></div><div class="val">12</div><div class="sub">–3</div></div>
+  <div class="token"><div class="bar" style="height:16px"></div><div class="val">16</div><div class="sub">–4</div></div>
+  <div class="token"><div class="bar" style="height:24px"></div><div class="val">24</div><div class="sub">–6</div></div>
+  <div class="token"><div class="bar" style="height:32px"></div><div class="val">32</div><div class="sub">–8</div></div>
+  <div class="token"><div class="bar" style="height:48px"></div><div class="val">48</div><div class="sub">–12</div></div>
+  <div class="token"><div class="bar" style="height:64px"></div><div class="val">64</div><div class="sub">–16</div></div>
+</div>
+<div class="label">Common Uses</div>
+<div class="inuse">
+  <div class="inuse-row"><div class="inuse-label">Icon gap</div><div class="inuse-bar" style="width:32px"><div class="inuse-txt">8</div></div></div>
+  <div class="inuse-row"><div class="inuse-label">Card padding</div><div class="inuse-bar" style="width:64px"><div class="inuse-txt">16</div></div></div>
+  <div class="inuse-row"><div class="inuse-label">Section gap</div><div class="inuse-bar" style="width:96px"><div class="inuse-txt">24</div></div></div>
+  <div class="inuse-row"><div class="inuse-label">Page padding</div><div class="inuse-bar" style="width:128px"><div class="inuse-txt">32</div></div></div>
+</div>
+</body></html>

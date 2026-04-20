@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html><head><meta charset="UTF-8">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'Poppins', sans-serif; background: #f5f5f5; padding: 20px 24px; }
+.label { font-size: 10px; font-weight: 600; color: #8c8c8c; letter-spacing: .06em; text-transform: uppercase; margin-bottom: 8px; }
+.group { margin-bottom: 16px; }
+.field { display: flex; flex-direction: column; gap: 4px; max-width: 280px; }
+.field label { font-size: 13px; font-weight: 500; color: #1A1A1A; }
+.field input, .field select { font-family: 'Poppins', sans-serif; font-size: 14px; padding: 10px 12px; border-radius: 6px; border: 1px solid #C8C8C8; background: #fff; outline: none; color: #1A1A1A; width: 100%; }
+.field input:focus { border-color: #006400; box-shadow: 0 0 0 3px rgba(0,100,0,0.15); }
+.field .hint { font-size: 12px; color: #8C8C8C; }
+.field .error-msg { font-size: 12px; color: #CE1126; }
+.row { display: flex; gap: 12px; flex-wrap: wrap; }
+</style>
+</head><body>
+<div class="row">
+  <div class="group">
+    <div class="label">Default</div>
+    <div class="field">
+      <label>Recipient Name</label>
+      <input type="text" placeholder="e.g. Rina Begum">
+      <span class="hint">Full name as on bank account</span>
+    </div>
+  </div>
+  <div class="group">
+    <div class="label">Focus</div>
+    <div class="field">
+      <label>Amount (BDT)</label>
+      <input type="text" value="12,500" style="border-color:#006400;box-shadow:0 0 0 3px rgba(0,100,0,0.15)">
+      <span class="hint">Min ৳500 · Max ৳500,000</span>
+    </div>
+  </div>
+  <div class="group">
+    <div class="label">Error</div>
+    <div class="field">
+      <label>Mobile Number</label>
+      <input type="text" value="017X" style="border-color:#CE1126">
+      <span class="error-msg">Enter a valid 11-digit number</span>
+    </div>
+  </div>
+  <div class="group">
+    <div class="label">Disabled</div>
+    <div class="field">
+      <label>Reference ID</label>
+      <input type="text" value="PB-2847-K" disabled style="background:#F5F5F5;color:#8C8C8C;cursor:not-allowed">
+    </div>
+  </div>
+  <div class="group">
+    <div class="label">Select</div>
+    <div class="field">
+      <label>Country</label>
+      <select><option>🇧🇩 Bangladesh</option><option>🇸🇦 Saudi Arabia</option><option>🇦🇪 UAE</option><option>🇲🇾 Malaysia</option></select>
+    </div>
+  </div>
+</div>
+</body></html>
