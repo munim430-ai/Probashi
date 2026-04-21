@@ -139,7 +139,7 @@ const SendMoneyScreen = ({ onBack }) => {
               ))}
             </div>
             <div style={{ background: '#F5E6E9', borderRadius: 10, padding: '10px 14px', fontSize: 12, color: '#CE1126' }}>
-              By confirming, you agree to Probashi's transfer terms and conditions.
+              By confirming, you agree to Deshantari's transfer terms and conditions.
             </div>
           </div>
         )}

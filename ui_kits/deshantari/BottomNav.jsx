@@ -1,4 +1,4 @@
-// BottomNav.jsx — Probashi Bottom Navigation
+// BottomNav.jsx — Deshantari Bottom Navigation
 
 const NAV_ITEMS = [
   {

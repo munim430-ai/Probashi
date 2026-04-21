@@ -1,4 +1,4 @@
-// HomeScreen.jsx — Probashi Dashboard
+// HomeScreen.jsx — Deshantari Dashboard
 
 const HomeScreen = ({ onNavigate }) => {
   const quickActions = [

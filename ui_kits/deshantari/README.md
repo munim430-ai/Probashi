@@ -1,6 +1,6 @@
-# Probashi UI Kit
+# Deshantari UI Kit
 
-**Product:** Probashi mobile app  
+**Product:** Deshantari mobile app  
 **Surface:** Mobile (375px wide, iOS/Android)  
 **Stack:** React + Babel inline JSX
 

@@ -1,0 +1,85 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&family=Noto+Sans+Bengali:wght@400;500;600;700&family=Galada&display=swap');
+@import "tailwindcss";
+
+@theme {
+  /* Brand Green */
+  --color-brand-green-700: #004d00;
+  --color-brand-green-600: #006400;
+  --color-brand-green-500: #1A8C2E;
+  --color-brand-green-400: #34A84A;
+  --color-brand-green-100: #C8EDCF;
+  --color-brand-green-50: #E8F5EC;
+
+  /* Brand Red */
+  --color-brand-red-700: #A00D1E;
+  --color-brand-red-600: #CE1126;
+  --color-brand-red-500: #E02236;
+  --color-brand-red-100: #F5C6CB;
+  --color-brand-red-50: #F5E6E9;
+
+  /* Brand Gold */
+  --color-brand-gold-600: #C8881A;
+  --color-brand-gold-500: #F4A832;
+  --color-brand-gold-50: #FEF7E8;
+
+  /* Neutrals */
+  --color-neutral-900: #1A1A1A;
+  --color-neutral-800: #2E2E2E;
+  --color-neutral-700: #424242;
+  --color-neutral-600: #5A5A5A;
+  --color-neutral-500: #6E6E6E;
+  --color-neutral-400: #8C8C8C;
+  --color-neutral-300: #C8C8C8;
+  --color-neutral-200: #E0E0E0;
+  --color-neutral-100: #F5F5F5;
+  --color-neutral-50: #FAFAFA;
+
+  /* Fonts */
+  --font-sans: 'Poppins', 'Segoe UI', sans-serif;
+  --font-bengali: 'Noto Sans Bengali', serif;
+  --font-display: 'Galada', 'Noto Sans Bengali', serif;
+
+  /* Shadows */
+  --shadow-card: 0 2px 8px rgba(0,0,0,0.08);
+  --shadow-elevated: 0 8px 24px rgba(0,0,0,0.12);
+}
+
+body {
+  font-family: var(--font-sans);
+  background-color: var(--color-neutral-100);
+  color: var(--color-neutral-900);
+  -webkit-font-smoothing: antialiased;
+  min-height: 100svh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+#root {
+  width: 100%;
+  max-width: 375px;
+  height: 100svh;
+  max-height: 812px;
+  background: white;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  margin: auto;
+  box-shadow: 0 32px 80px rgba(0,0,0,0.25);
+  border-radius: 0;
+}
+
+@media (min-width: 640px) {
+  #root {
+    border-radius: 44px;
+    height: 812px;
+  }
+}
+
+.hide-scrollbar::-webkit-scrollbar { display: none; }
+.hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }

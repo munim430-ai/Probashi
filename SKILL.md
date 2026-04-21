@@ -1,6 +1,6 @@
 ---
-name: probashi-design
-description: Use this skill to generate well-branded interfaces and assets for Probashi by Keystone Software Solutions, either for production or throwaway prototypes/mocks/etc. Contains essential design guidelines, colors, type, fonts, assets, and UI kit components for prototyping.
+name: deshantari-design
+description: Use this skill to generate well-branded interfaces and assets for Deshantari by Keystone Software Solutions, either for production or throwaway prototypes/mocks/etc. Contains essential design guidelines, colors, type, fonts, assets, and UI kit components for prototyping.
 user-invocable: true
 ---
 

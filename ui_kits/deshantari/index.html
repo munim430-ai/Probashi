@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Probashi UI Kit</title>
+<title>Deshantari UI Kit</title>
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&family=Noto+Sans+Bengali:wght@400;500;600;700&family=Galada&display=swap" rel="stylesheet">
 <script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
 <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
@@ -59,8 +59,8 @@ const Header = ({ showBack, title, onBack, sub }) => (
             <div style={{ width:17, height:17, borderRadius:'50%', background:'#CE1126' }} />
           </div>
           <div style={{ display:'flex', alignItems:'baseline', gap:4 }}>
-            <span style={{ color:'white', fontWeight:800, fontSize:18, letterSpacing:'-0.02em' }}>Probashi</span>
-            <span style={{ fontFamily:'Galada, serif', fontSize:15, color:'rgba(255,255,255,0.75)' }}>প্রবাসী</span>
+            <span style={{ color:'white', fontWeight:800, fontSize:18, letterSpacing:'-0.02em' }}>Deshantari</span>
+            <span style={{ fontFamily:'Galada, serif', fontSize:15, color:'rgba(255,255,255,0.75)' }}>দেশান্তরী</span>
           </div>
         </div>
       )}
@@ -356,7 +356,7 @@ const SocialScreen = () => {
   const [text, setText] = useState('');
   const posts = [
     { id:1, user:'Karim M.',  loc:'Riyadh, KSA',       time:'2h ago',  text:'Anyone know a good halal restaurant near Olaya district? New arrival, need help!',                           likes:14, replies:5,  av:'K', color:'#006400' },
-    { id:2, user:'Nasrin A.', loc:'Kuala Lumpur',       time:'5h ago',  text:'My iqama was renewed in 3 days using the Probashi legal service. Highly recommend to everyone!',              likes:42, replies:11, av:'N', color:'#1A56DB' },
+    { id:2, user:'Nasrin A.', loc:'Kuala Lumpur',       time:'5h ago',  text:'My iqama was renewed in 3 days using the Deshantari legal service. Highly recommend to everyone!',              likes:42, replies:11, av:'N', color:'#1A56DB' },
     { id:3, user:'Rahim S.',  loc:'Dubai, UAE',         time:'1d ago',  text:'Free Arabic course on Skills tab — completed module 3 today. My employer noticed already 🙌',                 likes:67, replies:20, av:'R', color:'#7C3AED' },
     { id:4, user:'Mina B.',   loc:'Singapore',          time:'2d ago',  text:'পরিবারকে মিস করছি। কিন্তু আলহামদুলিল্লাহ, এই মাসে ভালো আয় হয়েছে।',                                         likes:98, replies:33, av:'M', color:'#C8881A' },
   ];
@@ -689,7 +689,7 @@ const ProfileScreen = () => {
         )}
         {tab==='settings' && (
           <div style={{ display:'flex', flexDirection:'column', gap:10 }}>
-            {[['🌐','Language','English / বাংলা'],['🔔','Notifications','On'],['🔒','PIN & Security','Enabled'],['💬','Help & Support',''],['ℹ️','About Probashi','v2.4.1']].map(([icon,label,val])=>(
+            {[['🌐','Language','English / বাংলা'],['🔔','Notifications','On'],['🔒','PIN & Security','Enabled'],['💬','Help & Support',''],['ℹ️','About Deshantari','v2.4.1']].map(([icon,label,val])=>(
               <div key={label} style={{ background:'white', borderRadius:12, padding:'14px 16px', boxShadow:'0 2px 6px rgba(0,0,0,0.04)', display:'flex', alignItems:'center', gap:12, cursor:'pointer' }}>
                 <span style={{ fontSize:20 }}>{icon}</span>
                 <span style={{ flex:1, fontSize:14, fontWeight:600, color:'#1A1A1A' }}>{label}</span>

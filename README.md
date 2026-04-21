@@ -1,14 +1,14 @@
-# Probashi Design System
+# Deshantari Design System
 
 **Company:** Keystone Software Solutions  
-**Product:** Probashi — a digital platform for Bangladeshi migrant workers (প্রবাসী)  
-**Sources:** GitHub repo `munim430-ai/Probashi` (stub only — one-line README), plus brand brief from project owner.
+**Product:** Deshantari — a digital platform for Bangladeshi migrant workers (দেশান্তরী)  
+**Sources:** GitHub repo `munim430-ai/Deshantari` (stub only — one-line README), plus brand brief from project owner.
 
 ---
 
-## What is Probashi?
+## What is Deshantari?
 
-"Probashi" (প্রবাসী) means *expatriate* in Bengali — someone living abroad. The Probashi platform serves Bangladeshi migrant workers globally, covering:
+"Deshantari" (দেশান্তরী) means *expatriate* in Bengali — someone living abroad. The Deshantari platform serves Bangladeshi migrant workers globally, covering:
 
 - **Remittance & financial services** — send money home, track transfers
 - **Job search & placement** — find verified overseas jobs
@@ -140,7 +140,7 @@ README.md                    ← This file
 SKILL.md                     ← Agent skill definition
 colors_and_type.css          ← CSS custom properties (colors, type, spacing)
 assets/
-  logo/                      ← Probashi logo variants (SVG)
+  logo/                      ← Deshantari logo variants (SVG)
   icons/                     ← Custom SVG icons (flag, taka, worker, etc.)
 preview/
   colors-brand.html          ← Brand color swatches
@@ -159,7 +159,7 @@ preview/
   brand-logo.html            ← Logo variants
   brand-illustrations.html   ← Illustrations and motifs
 ui_kits/
-  probashi/
+  deshantari/
     README.md
     index.html               ← Main interactive prototype
     Header.jsx

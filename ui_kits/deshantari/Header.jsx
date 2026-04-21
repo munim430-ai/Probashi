@@ -1,4 +1,4 @@
-// Header.jsx — Probashi App Header
+// Header.jsx — Deshantari App Header
 // Export to window for cross-script use
 
 const Header = ({ title, showBack, onBack, notifCount = 0, avatarInitial = 'R' }) => {
@@ -28,7 +28,7 @@ const Header = ({ title, showBack, onBack, notifCount = 0, avatarInitial = 'R' }
             <div style={{ width: 30, height: 30, borderRadius: '50%', background: 'rgba(255,255,255,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
               <div style={{ width: 17, height: 17, borderRadius: '50%', background: '#CE1126' }} />
             </div>
-            <span style={{ color: 'white', fontWeight: 800, fontSize: 18, letterSpacing: '-0.02em' }}>Probashi</span>
+            <span style={{ color: 'white', fontWeight: 800, fontSize: 18, letterSpacing: '-0.02em' }}>Deshantari</span>
           </div>
         )}
         {showBack && <span style={{ color: 'white', fontWeight: 700, fontSize: 16 }}>{title}</span>}

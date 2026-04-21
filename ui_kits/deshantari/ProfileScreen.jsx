@@ -113,7 +113,7 @@ const ProfileScreen = () => {
               { label: 'PIN & Security', value: 'Enabled', icon: '🔒' },
               { label: 'Linked Bank Accounts', value: '2 accounts', icon: '🏦' },
               { label: 'Help & Support', value: '', icon: '💬' },
-              { label: 'About Probashi', value: 'v2.4.1', icon: 'ℹ️' },
+              { label: 'About Deshantari', value: 'v2.4.1', icon: 'ℹ️' },
             ].map(item => (
               <div key={item.label} style={{ background: 'white', borderRadius: 12, padding: '14px 16px', boxShadow: '0 2px 8px rgba(0,0,0,0.06)', display: 'flex', alignItems: 'center', gap: 12, cursor: 'pointer' }}>
                 <span style={{ fontSize: 20 }}>{item.icon}</span>
