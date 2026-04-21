@@ -1,1 +1,28 @@
-{\n  "name": "probashi",\n  "version": "1.0.0",\n  "description": "Probashi - A project management application",\n  "private": false,\n  "type": "module",\n  "scripts": {\n    "dev": "cd deshantari-app && npm run dev",\n    "build": "cd deshantari-app && npm run build",\n    "lint": "cd deshantari-app && npm run lint",\n    "preview": "cd deshantari-app && npm run preview",\n    "install-all": "npm install && cd deshantari-app && npm install"\n  },\n  "keywords": [\n    "probashi",\n    "project",\n    "management"\n  ],\n  "author": "munim430-ai",\n  "license": "MIT"\n}
+{
+  "name": "probashi",
+  "version": "1.0.0",
+  "description": "Probashi - A project management application",
+  "private": true,
+  "type": "module",
+  "workspaces": [
+    "deshantari-app"
+  ],
+  "scripts": {
+    "dev": "npm --workspace=deshantari-app run dev",
+    "build": "npm --workspace=deshantari-app run build",
+    "lint": "npm --workspace=deshantari-app run lint",
+    "preview": "npm --workspace=deshantari-app run preview",
+    "install-all": "npm install && npm install --workspace=deshantari-app"
+  },
+  "keywords": [
+    "probashi",
+    "project",
+    "management"
+  ],
+  "author": "munim430-ai",
+  "license": "MIT",
+  "engines": {
+    "node": ">=18",
+    "npm": ">=9"
+  }
+}
