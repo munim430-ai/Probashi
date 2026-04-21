@@ -1,0 +1,7 @@
+{
+  "buildCommand": "cd deshantari-app && npm install && npm run build",
+  "outputDirectory": "deshantari-app/dist",
+  "rewrites": [
+    { "source": "/(.*)", "destination": "/index.html" }
+  ]
+}
