@@ -4,15 +4,10 @@
   "description": "Probashi - A project management application",
   "private": true,
   "type": "module",
-  "workspaces": [
-    "deshantari-app"
-  ],
   "scripts": {
-    "dev": "npm --workspace=deshantari-app run dev",
-    "build": "npm --workspace=deshantari-app run build",
-    "lint": "npm --workspace=deshantari-app run lint",
-    "preview": "npm --workspace=deshantari-app run preview",
-    "install-all": "npm install && npm install --workspace=deshantari-app"
+    "dev": "cd deshantari-app && npm install && npm run dev",
+    "build": "cd deshantari-app && npm install && npm run build",
+    "start": "cd deshantari-app && npm run preview"
   },
   "keywords": [
     "probashi",
