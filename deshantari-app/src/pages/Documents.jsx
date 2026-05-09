@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { FileText, Plus, ChevronDown, ChevronUp, AlertTriangle } from 'lucide-react';
 import { Badge } from '../components/Badge';
-import { motion, AnimatePresence } from 'framer-motion';
+import { AnimatePresence } from 'framer-motion';
 
 const DOCS = [
   { n: 'Passport',            num: 'A1234567',   exp: '2028-03-15', s: 'valid',    issuer: 'Bangladesh Govt.' },

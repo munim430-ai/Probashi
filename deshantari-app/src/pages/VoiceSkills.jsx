@@ -1,6 +1,6 @@
 import React, { useState, useRef } from 'react';
 import { Mic, ChevronRight, ChevronLeft } from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { AnimatePresence } from 'framer-motion';
 import { Badge } from '../components/Badge';
 
 const COURSES = [

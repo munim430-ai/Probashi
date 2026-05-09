@@ -2,7 +2,7 @@ import React from 'react';
 import { Home, Send, Briefcase, MoreHorizontal, User } from 'lucide-react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import clsx from 'clsx';
-import { motion } from 'framer-motion';
+
 
 const NAV = [
   { id: '/',        label: 'Home',    icon: Home },
