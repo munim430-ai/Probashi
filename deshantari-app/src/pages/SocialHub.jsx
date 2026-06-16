@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Heart, MessageCircle, Plus, MapPin } from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { AnimatePresence } from 'framer-motion';
 
 const POSTS = [
   { id: 1, user: 'Karim M.',  loc: 'Riyadh, KSA',    time: '2h ago',  text: 'Anyone know a good halal restaurant near Olaya district? New arrival, need help!', likes: 14, replies: 5,  av: 'K', color: 'bg-brand-green-600' },
